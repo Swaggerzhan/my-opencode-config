@@ -1,0 +1,31 @@
+{
+  "name": "my-opencode-config",
+  "version": "0.1.0",
+  "description": "Personal OpenCode V2 configuration as a plugin: agents, commands, tools, MCP servers, permissions, instructions.",
+  "type": "module",
+  "scripts": {
+    "test": "tsx --test test/*.test.ts test/*.test.tsx"
+  },
+  "exports": {
+    ".": "./index.ts",
+    "./rpc": "./src/rpc.ts",
+    "./tui": "./src/tui.tsx"
+  },
+  "dependencies": {
+    "@opencode/plugin": ">=2.0.0",
+    "jsonc-parser": "^3.3.1"
+  },
+  "peerDependencies": {
+    "@opentui/core": ">=0.5.8",
+    "@opentui/solid": ">=0.5.8",
+    "solid-js": ">=1.9.0"
+  },
+  "devDependencies": {
+    "@opentui/core": "^0.5.12",
+    "@opentui/solid": "^0.5.12",
+    "@types/node": "^26.6.3",
+    "solid-js": "^1.9.12",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

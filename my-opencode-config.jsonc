@@ -1,0 +1,22 @@
+{
+  // Per-agent model assignment. Providers and models are defined in your own
+  // opencode.jsonc; this file only decides which model each agent uses.
+  //
+  // To override without touching this repository, copy this file to
+  // ~/.config/opencode/my-opencode-config.jsonc and edit there. Changes are
+  // picked up live (no restart).
+  //
+  // Format: "<agent-id>": "<provider>/<model>[#variant]"
+  "agents": {
+    "main": "Kimi/kimi-k3#max",
+    "codeleader": "Kimi/kimi-k3#max",
+    "coder": "Kimi/kimi-k3",
+    "codebuilder": "Kimi/kimi-k3",
+    "general": "Kimi/kimi-k3",
+    "insight": "Kimi/kimi-k3",
+    "scout": "Kimi/kimi-k3",
+
+    // Hidden maintenance agents
+    "title": "DeepSeek/deepseek-v4-flash#max"
+  }
+}

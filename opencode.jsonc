@@ -1,0 +1,155 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // This file is a ready-made global config: copy or merge it into
+  // ~/.config/opencode/opencode.jsonc. Providers are enabled per machine via
+  // environment variables; unset env vars leave the provider unusable but
+  // harmless.
+
+  // Plugin entry for this repository. Unneeded when the repo is cloned into
+  // the auto-discovered plugins directory; otherwise uncomment and point at
+  // the clone location.
+  // "plugins": ["./plugins/my-opencode-config"],
+
+  "model": "OpenAI/gpt-5.6-sol",
+  "default_agent": "main",
+
+  "providers": {
+    "OpenAI": {
+      "name": "OpenAI",
+      // The Responses API preserves reasoning effort "max".
+      "package": "aisdk:@ai-sdk/openai",
+      "settings": {
+        "baseURL": "{env:OPENCODE_OPENAI_ENDPOINT}",
+        "apiKey": "{env:OPENCODE_OPENAI_KEY}"
+      },
+      "models": {
+        "gpt-5.6-sol": {
+          "name": "GPT 5.6 Sol",
+          "limit": { "context": 272000, "output": 128000 },
+          "variants": [
+            { "id": "max", "settings": { "reasoningEffort": "max" } }
+          ]
+        },
+        "gpt-5.6-terra": {
+          "name": "GPT 5.6 Terra",
+          "limit": { "context": 272000, "output": 128000 },
+          "variants": [
+            { "id": "xhigh", "settings": { "reasoningEffort": "xhigh" } },
+            { "id": "max", "settings": { "reasoningEffort": "max" } }
+          ]
+        },
+        "gpt-5.6-luna": {
+          "name": "GPT 5.6 Luna",
+          "limit": { "context": 272000, "output": 128000 },
+          "variants": [
+            { "id": "max", "settings": { "reasoningEffort": "max" } }
+          ]
+        }
+      }
+    },
+    "xAI": {
+      "name": "xAI",
+      "package": "aisdk:@ai-sdk/openai",
+      "settings": {
+        "baseURL": "{env:OPENCODE_XAI_ENDPOINT}",
+        "apiKey": "{env:OPENCODE_XAI_KEY}"
+      },
+      "models": {
+        "grok-4.5": {
+          "name": "Grok 4.5",
+          "limit": { "context": 1000000, "output": 128000 }
+        }
+      }
+    },
+    "DeepSeek": {
+      "name": "DeepSeek",
+      "package": "aisdk:@ai-sdk/openai",
+      "settings": {
+        "baseURL": "{env:OPENCODE_DEEPSEEK_ENDPOINT}",
+        "apiKey": "{env:OPENCODE_DEEPSEEK_KEY}"
+      },
+      "models": {
+        "deepseek-v4-pro": {
+          "name": "DeepSeek V4 Pro",
+          "settings": { "reasoningEffort": "max" },
+          "limit": { "context": 1000000, "output": 384000 },
+          "variants": [
+            { "id": "max", "settings": { "reasoningEffort": "max" } }
+          ]
+        },
+        "deepseek-v4-flash": {
+          "name": "DeepSeek V4 Flash",
+          "settings": { "reasoningEffort": "max" },
+          "limit": { "context": 1000000, "output": 384000 },
+          "variants": [
+            { "id": "max", "settings": { "reasoningEffort": "max" } }
+          ]
+        }
+      }
+    },
+    "Kimi": {
+      "name": "Kimi",
+      "package": "aisdk:@ai-sdk/anthropic",
+      "settings": {
+        "baseURL": "{env:OPENCODE_KIMI_ENDPOINT}",
+        "apiKey": "{env:OPENCODE_KIMI_KEY}"
+      },
+      "models": {
+        "kimi-k3": {
+          "name": "Kimi K3",
+          "settings": { "effort": "max" },
+          "limit": { "context": 1000000, "output": 1048576 }
+        }
+      }
+    }
+  },
+
+  // Global permission floor: broad allows first, then the deny rules
+  // (last match wins). Agent-level rules in agents/*.md are appended after
+  // these and can refine them.
+  "permissions": [
+    { "action": "read", "resource": "*", "effect": "allow" },
+    { "action": "read", "resource": "build/**", "effect": "deny" },
+    { "action": "read", "resource": "nvim.root/**", "effect": "deny" },
+    { "action": "read", "resource": "gflag_change_history.md", "effect": "deny" },
+    { "action": "read", "resource": "global_compile_flags.json.md", "effect": "deny" },
+    { "action": "read", "resource": "release.bcloud", "effect": "deny" },
+    { "action": "read", "resource": "run.py", "effect": "deny" },
+    { "action": "read", "resource": "toolserver/**", "effect": "deny" },
+    { "action": "read", "resource": ".bcloud.cache/**", "effect": "deny" },
+    { "action": "edit", "resource": "*", "effect": "allow" },
+    { "action": "glob", "resource": "*", "effect": "allow" },
+    { "action": "grep", "resource": "*", "effect": "allow" },
+    { "action": "list", "resource": "*", "effect": "allow" },
+    { "action": "shell", "resource": "*", "effect": "allow" },
+    { "action": "shell", "resource": "rm -rf *", "effect": "deny" },
+    { "action": "shell", "resource": "shutdown *", "effect": "deny" },
+    { "action": "shell", "resource": "reboot", "effect": "deny" },
+    { "action": "shell", "resource": "poweroff", "effect": "deny" },
+    { "action": "shell", "resource": "halt", "effect": "deny" },
+    { "action": "shell", "resource": "init *", "effect": "deny" },
+    { "action": "shell", "resource": "su *", "effect": "deny" },
+    { "action": "shell", "resource": "dd *", "effect": "deny" },
+    { "action": "shell", "resource": "mkfs *", "effect": "deny" },
+    { "action": "shell", "resource": "fdisk *", "effect": "deny" },
+    { "action": "shell", "resource": "parted *", "effect": "deny" },
+    { "action": "shell", "resource": "iptables *", "effect": "deny" },
+    { "action": "shell", "resource": "git push --force *", "effect": "deny" },
+    { "action": "shell", "resource": "git reset --hard *", "effect": "deny" },
+    { "action": "shell", "resource": "git clean -f*", "effect": "deny" },
+    { "action": "subagent", "resource": "*", "effect": "allow" },
+    { "action": "question", "resource": "*", "effect": "allow" },
+    { "action": "webfetch", "resource": "*", "effect": "allow" },
+    { "action": "websearch", "resource": "*", "effect": "allow" },
+    { "action": "skill", "resource": "*", "effect": "allow" },
+    { "action": "sbash", "resource": "*", "effect": "deny" },
+    { "action": "external_directory", "resource": "*", "effect": "allow" }
+  ],
+
+  // Reserve 20K tokens so automatic compaction starts early.
+  "compaction": {
+    "auto": true,
+    "buffer": 20000
+  }
+}
