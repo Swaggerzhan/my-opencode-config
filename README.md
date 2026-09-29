@@ -8,12 +8,12 @@ MCP 服务器、权限底线、全局指令、agent 模型映射。
 ## 安装
 
 ```bash
-opencode plugin add github:<user>/my-opencode-config
+opencode plugin add github:Swaggerzhan/my-opencode-config
 opencode service restart
 ```
 
-- 跟踪分支/钉版本:`github:<user>/my-opencode-config#main`、`...#v0.1.0`。
-- 私有仓库:`opencode plugin add git+ssh://git@github.com/<user>/my-opencode-config.git`。
+- 跟踪分支/钉版本:`github:Swaggerzhan/my-opencode-config#main`、`...#v0.1.0`。
+- 私有仓库:`opencode plugin add git+ssh://git@github.com/Swaggerzhan/my-opencode-config.git`。
 - 该命令会把插件写进全局配置 `~/.config/opencode/opencode.jsonc` 的
   `plugins`,并安装到插件缓存。
 
@@ -46,7 +46,7 @@ provider/model 定义不走插件,由用户自己的全局配置负责。仓库�
 
 ```bash
 curl -o ~/.config/opencode/opencode.jsonc \
-  https://raw.githubusercontent.com/<user>/my-opencode-config/main/opencode.jsonc
+  https://raw.githubusercontent.com/Swaggerzhan/my-opencode-config/main/opencode.jsonc
 ```
 
 ## TUI 键位(cli.json,可选)
@@ -121,7 +121,7 @@ subagent-magazine 插件时,把 [`cli.json`](cli.json) 的内容手动合并进
 {
   "plugins": [
     {
-      "package": "github:<user>/my-opencode-config",
+      "package": "github:Swaggerzhan/my-opencode-config",
       "options": {
         "agents": true,       // agent 文件物化 + 模型映射 + 内置 agent 裁剪 + 默认 agent
         "instructions": true, // AGENTS_.md 注入
