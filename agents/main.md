@@ -1,6 +1,7 @@
 ---
 description: General-purpose agent that helps users solve a wide variety of problems.
 mode: primary
+color: "#38BDF8"
 permissions:
   - action: read
     resource: "*"
