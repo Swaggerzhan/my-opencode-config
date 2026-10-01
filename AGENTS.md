@@ -10,11 +10,16 @@ injected) because the plugin API cannot register agents.
 Layout:
 
 - `index.ts`, `src/` — plugin code (Promise API, `@opencode/plugin`).
-  `src/tui.tsx` is the TUI sidebar (Context Usage meter, MCP status,
-  collapsible Tools). The `./tui` export points at the **compiled**
+  `src/tui.tsx` is the TUI sidebar (Context Usage meter and collapsible
+  Tools, prepended ahead of the built-in sidebar sections — never claim
+  `sidebar.content` with `replace`, that suppresses the host's own Context
+  and MCP sections). The `./tui` export points at the **compiled**
   `dist/tui.js`, not the source: OpenCode's TUI only applies its Solid JSX
   transform to files outside `node_modules`, so managed (npm/git) installs
-  must ship JSX-free JS. `src/rpc.ts` is the
+  must ship JSX-free JS. The root `tui.ts` is the local-install entry:
+  host resolution maps a directory target to `<root>/tui` (the export map
+  only applies to package-name specifiers), and it re-exports the source.
+  `src/rpc.ts` is the
   RPC definition it shares with the server side; `src/usage.ts` holds the
   meter's pure computations; `src/paths.ts` the shared filesystem locations.
 - `agents/` — agent definitions (V2 frontmatter: `permissions` list; no
@@ -28,13 +33,16 @@ Layout:
   trailing underscore keeps it from loading as project guidance.
 - `cli.json` — TUI snippet for manual merge into `~/.config/opencode/cli.json`
 - `test/` — unit tests (`npm test`, tsx + node:test; dev-only, not part of
-  the plugin runtime). `test/sidebar.test.tsx` skips unless the OpenTUI
-  native renderer is available (bun).
+  the plugin runtime). `test/sidebar.render.tsx` is the sidebar render
+  suite, run by `npm run test:tui` (bun + the OpenTUI Solid preload). It is
+  a plain script, not a node:test file: under `bun test` the preload breaks
+  OpenTUI's native FFI, and without it JSX loses Solid component semantics.
 - `docs/` — reference material
 
 Development: `npm install` once (runtime deps are installed by OpenCode for
 managed installs, but local path loading does not install them), then
-`npx tsc --noEmit` to typecheck and `npm test` to run the tests. After
+`npx tsc --noEmit` to typecheck, `npm test` for the node suite, and
+`npm run test:tui` for the sidebar render suite (needs bun). After
 editing `src/tui.tsx` (or its imports `rpc.ts`/`usage.ts`), run
 `npm run build:tui` and commit `dist/` — git installs have no build step.
 Do not name the script `build`/`prepare`/`prepack`/`install`: pacote runs

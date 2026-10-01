@@ -138,13 +138,17 @@ opencode service restart
 
 ### TUI 侧边栏
 
-侧边栏内容替换为三个区块(随插件自动加载,无需额外配置):
+在内置侧边栏内容之前新增两个区块(随插件自动加载,无需额外配置;内置的
+Context、MCP 等区块保持原生样式不变):
 
 - **Context Usage**:上下文用量进度条(宽度与标题同宽),显示当前已用 / 上限
-  (K)与百分比;100K 以下绿色,100K–180K 黄色,180K 起红色。
-- **MCP**:各 MCP server 的连接状态。
+  (K)与百分比;100K 以下绿色,100K–180K 黄色,180K 起红色。模型目录按
+  session 所在 location 解析。
 - **Tools**:当前 session 的 agent 实际可见的工具列表(含 sbash),点击标题或
   命令面板 "Toggle sidebar tools" 展开 / 收起。
+
+内置 Context 区块与 Context Usage 信息重复,不想要的可以在 `plugins` 里加
+`"-opencode.sidebar.context"` 关掉。
 
 ## 插件选项
 

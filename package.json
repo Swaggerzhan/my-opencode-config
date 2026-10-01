@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build:tui": "tsc -p tsconfig.build.json",
-    "test": "tsx --test test/*.test.ts test/*.test.tsx"
+    "test": "tsx --test test/*.test.ts",
+    "test:tui": "bun --preload @opentui/solid/preload test/sidebar.render.tsx"
   },
   "exports": {
     ".": "./index.ts",
