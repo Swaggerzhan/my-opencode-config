@@ -82,17 +82,21 @@ subagent-magazine 插件时,把 [`cli.json`](cli.json) 的内容手动合并进
 
 ```bash
 opencode plugin check      # 检查有无更新
-opencode plugin update my-opencode-config
+opencode plugin update github:Swaggerzhan/my-opencode-config
 opencode service restart
 ```
 
 未 pin tag/commit 时跟踪默认分支;pin 住的版本不会被 update 动。
 手动 clone 安装的,直接 `git pull` 后重启即可。
 
+注意:update/remove 的参数必须是 `plugins` 里的完整条目字符串
+(如 `github:Swaggerzhan/my-opencode-config`),不能用
+`opencode plugin list` 显示的短 ID,否则报 "Plugin is not configured"。
+
 ## 卸载
 
 ```bash
-opencode plugin remove my-opencode-config
+opencode plugin remove github:Swaggerzhan/my-opencode-config
 opencode service restart
 ```
 

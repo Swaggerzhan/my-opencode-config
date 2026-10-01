@@ -11,7 +11,10 @@ Layout:
 
 - `index.ts`, `src/` — plugin code (Promise API, `@opencode/plugin`).
   `src/tui.tsx` is the TUI sidebar (Context Usage meter, MCP status,
-  collapsible Tools) loaded through the `./tui` export; `src/rpc.ts` is the
+  collapsible Tools). The `./tui` export points at the **compiled**
+  `dist/tui.js`, not the source: OpenCode's TUI only applies its Solid JSX
+  transform to files outside `node_modules`, so managed (npm/git) installs
+  must ship JSX-free JS. `src/rpc.ts` is the
   RPC definition it shares with the server side; `src/usage.ts` holds the
   meter's pure computations; `src/paths.ts` the shared filesystem locations.
 - `agents/` — agent definitions (V2 frontmatter: `permissions` list; no
@@ -31,7 +34,9 @@ Layout:
 
 Development: `npm install` once (runtime deps are installed by OpenCode for
 managed installs, but local path loading does not install them), then
-`npx tsc --noEmit` to typecheck and `npm test` to run the tests.
+`npx tsc --noEmit` to typecheck and `npm test` to run the tests. After
+editing `src/tui.tsx` (or its imports `rpc.ts`/`usage.ts`), run
+`npm run build` and commit `dist/` — git installs have no build step.
 
 Local verification without touching the real environment:
 
