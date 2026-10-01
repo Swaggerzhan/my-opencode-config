@@ -19,6 +19,7 @@ const models = [{ providerID: "Kimi", id: "kimi-k3", modelID: "kimi-k3", limit: 
 function mockContext(input: {
   messages: Accessor<Array<Record<string, unknown>>>
   tools?: Accessor<string[]>
+  toolsError?: Accessor<boolean>
   sessionLocation?: string
   modelListLocations?: string[]
 }): { context: Context; toggle: () => void } {
@@ -43,7 +44,14 @@ function mockContext(input: {
       },
     },
     ui: { model: { current: () => ({ providerID: "Kimi", modelID: "kimi-k3" }) } },
-    client: { rpc: () => ({ tools: async () => ({ tools: (input.tools ?? (() => []))() }) }) },
+    client: {
+      rpc: () => ({
+        tools: async () => {
+          if (input.toolsError?.()) throw new Error("no rpc")
+          return { tools: (input.tools ?? (() => []))() }
+        },
+      }),
+    },
     keymap: {
       layer: (layer: () => { commands?: Array<{ run: () => void }> }) => {
         toggle = layer().commands?.[0]?.run ?? toggle
@@ -146,6 +154,35 @@ const tests: Array<[string, () => Promise<void>]> = [
         assert.ok(expanded.includes("▾ Tools (2)"), expanded)
         assert.ok(expanded.includes("read"), expanded)
         assert.ok(expanded.includes("sbash"), expanded)
+      } finally {
+        setup.renderer.destroy()
+      }
+    },
+  ],
+  [
+    "tools header reports rpc failure instead of a misleading zero",
+    async () => {
+      const [fail, setFail] = createSignal(true)
+      const { context } = mockContext({ messages: () => [], tools: () => ["read"], toolsError: fail })
+      const setup = await testRender(
+        () => (
+          <PluginContextProvider value={context}>
+            <Sidebar sessionID="ses_test" toolsPollMs={30} />
+          </PluginContextProvider>
+        ),
+        { width: 40, height: 20 },
+      )
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 60))
+        await setup.renderOnce()
+        const broken = setup.captureCharFrame()
+        assert.ok(broken.includes("▸ Tools (rpc unavailable)"), broken)
+
+        setFail(false)
+        await new Promise((resolve) => setTimeout(resolve, 90))
+        await setup.renderOnce()
+        const healed = setup.captureCharFrame()
+        assert.ok(healed.includes("▸ Tools (1)"), healed)
       } finally {
         setup.renderer.destroy()
       }

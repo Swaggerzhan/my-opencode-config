@@ -62,19 +62,19 @@ function Tools(props: { sessionID: string; pollMs?: number }) {
   const rpc = context.client.rpc(SidebarRpc)
   const [open, setOpen] = createSignal(false)
   const [tools, setTools] = createSignal<string[]>([])
-  const session = createMemo(() => context.data.session.get(props.sessionID))
+  const [unavailable, setUnavailable] = createSignal(false)
 
   onMount(() => {
     const load = async () => {
       try {
-        // Route the call to the server plugin instance of the session's
-        // location, where the context hook records the tool set.
-        const result = (await rpc.tools({ sessionID: props.sessionID }, { location: session()?.location })) as {
-          tools: string[]
-        }
+        const result = (await rpc.tools({ sessionID: props.sessionID })) as { tools: string[] }
         setTools(result.tools)
-      } catch {
-        // Server plugin not reachable yet; retried on the next tick.
+        setUnavailable(false)
+      } catch (error) {
+        // Keep the last good list, but say so — an empty header otherwise
+        // looks identical to "no request recorded yet".
+        console.error("my-opencode-config sidebar: tools rpc failed", error)
+        setUnavailable(true)
       }
     }
     void load()
@@ -98,7 +98,7 @@ function Tools(props: { sessionID: string; pollMs?: number }) {
   return (
     <box flexDirection="column">
       <text fg={context.theme.text.base} onMouseUp={() => setOpen(!open())}>
-        {`${open() ? "▾" : "▸"} Tools (${tools().length})`}
+        {`${open() ? "▾" : "▸"} Tools (${unavailable() ? "rpc unavailable" : tools().length})`}
       </text>
       <Show when={open()}>
         <Show when={tools().length > 0} fallback={<text fg={context.theme.text.base}>  (no request yet)</text>}>

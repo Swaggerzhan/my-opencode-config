@@ -40,17 +40,19 @@ function Tools(props) {
     const rpc = context.client.rpc(SidebarRpc);
     const [open, setOpen] = createSignal(false);
     const [tools, setTools] = createSignal([]);
-    const session = createMemo(() => context.data.session.get(props.sessionID));
+    const [unavailable, setUnavailable] = createSignal(false);
     onMount(() => {
         const load = async () => {
             try {
-                // Route the call to the server plugin instance of the session's
-                // location, where the context hook records the tool set.
-                const result = (await rpc.tools({ sessionID: props.sessionID }, { location: session()?.location }));
+                const result = (await rpc.tools({ sessionID: props.sessionID }));
                 setTools(result.tools);
+                setUnavailable(false);
             }
-            catch {
-                // Server plugin not reachable yet; retried on the next tick.
+            catch (error) {
+                // Keep the last good list, but say so — an empty header otherwise
+                // looks identical to "no request recorded yet".
+                console.error("my-opencode-config sidebar: tools rpc failed", error);
+                setUnavailable(true);
             }
         };
         void load();
@@ -69,7 +71,7 @@ function Tools(props) {
             },
         ],
     }));
-    return (_jsxs("box", { flexDirection: "column", children: [_jsx("text", { fg: context.theme.text.base, onMouseUp: () => setOpen(!open()), children: `${open() ? "▾" : "▸"} Tools (${tools().length})` }), _jsx(Show, { when: open(), children: _jsx(Show, { when: tools().length > 0, fallback: _jsx("text", { fg: context.theme.text.base, children: "  (no request yet)" }), children: _jsx(For, { each: tools(), children: (tool) => _jsx("text", { fg: context.theme.text.base, children: `  ${tool}` }) }) }) })] }));
+    return (_jsxs("box", { flexDirection: "column", children: [_jsx("text", { fg: context.theme.text.base, onMouseUp: () => setOpen(!open()), children: `${open() ? "▾" : "▸"} Tools (${unavailable() ? "rpc unavailable" : tools().length})` }), _jsx(Show, { when: open(), children: _jsx(Show, { when: tools().length > 0, fallback: _jsx("text", { fg: context.theme.text.base, children: "  (no request yet)" }), children: _jsx(For, { each: tools(), children: (tool) => _jsx("text", { fg: context.theme.text.base, children: `  ${tool}` }) }) }) })] }));
 }
 // Exported for test/sidebar.test.tsx.
 export function Sidebar(props) {

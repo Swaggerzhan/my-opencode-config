@@ -138,17 +138,18 @@ opencode service restart
 
 ### TUI 侧边栏
 
-在内置侧边栏内容之前新增两个区块(随插件自动加载,无需额外配置;内置的
-Context、MCP 等区块保持原生样式不变):
+在内置侧边栏内容之前新增两个区块(随插件自动加载,无需额外配置):
 
 - **Context Usage**:上下文用量进度条(宽度与标题同宽),显示当前已用 / 上限
   (K)与百分比;100K 以下绿色,100K–180K 黄色,180K 起红色。模型目录按
   session 所在 location 解析。
 - **Tools**:当前 session 的 agent 实际可见的工具列表(含 sbash),点击标题或
-  命令面板 "Toggle sidebar tools" 展开 / 收起。
+  命令面板 "Toggle sidebar tools" 展开 / 收起。RPC 持续失败时标题显示
+  (rpc unavailable),与"还没有请求记录"的空列表区分开。
 
-内置 Context 区块与 Context Usage 信息重复,不想要的可以在 `plugins` 里加
-`"-opencode.sidebar.context"` 关掉。
+内置的 MCP 区块保持原生样式,插件不触碰。内置 Context 区块与 Context Usage
+重复,仓库自带的 `opencode.jsonc` 已通过 `"-opencode.sidebar.context"` 将其
+隐藏(把它合并进全局配置即生效)。
 
 ## 插件选项
 
