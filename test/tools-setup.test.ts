@@ -5,7 +5,11 @@ import { setupTools } from "../src/tools"
 type HookEvent = { agent: string; sessionID: string; tools: Record<string, unknown> }
 
 async function setup() {
-  const added: Array<{ name: string; execute: (input: unknown, ctx: unknown) => Promise<{ content: string }> }> = []
+  const added: Array<{
+    name: string
+    options?: { codemode?: boolean }
+    execute: (input: unknown, ctx: unknown) => Promise<{ content: string }>
+  }> = []
   let hookFn: ((event: HookEvent) => void) | undefined
   const ctx = {
     location: { directory: "/tmp" },
@@ -23,6 +27,11 @@ async function setup() {
   assert.ok(hookFn, "context hook registered")
   return { sbash, hook: hookFn }
 }
+
+test("sbash is registered as a direct tool", async () => {
+  const { sbash } = await setup()
+  assert.equal(sbash.options?.codemode, false)
+})
 
 test("sbash rejects commands outside the whitelist", async () => {
   const { sbash } = await setup()

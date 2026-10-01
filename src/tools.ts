@@ -47,6 +47,7 @@ export async function setupTools(ctx: Context): Promise<() => void> {
   await ctx.tool.transform((editor) => {
     editor.add({
       name: "sbash",
+      options: { codemode: false },
       description:
         "Run a simple whitelisted command: git, openspec, ls, rm, or rmdir. ls, rm, and rmdir take `path` (absolute paths only): ls runs as `ls -al <path>`, rm as `rm -f <path>`, rmdir as `rmdir <path>` (removes empty directories only). git and openspec take `args`, one argument string; quote any argument containing spaces, e.g. `commit -m \"message\"`.",
       input: {
