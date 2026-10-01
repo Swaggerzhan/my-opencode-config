@@ -36,7 +36,10 @@ Development: `npm install` once (runtime deps are installed by OpenCode for
 managed installs, but local path loading does not install them), then
 `npx tsc --noEmit` to typecheck and `npm test` to run the tests. After
 editing `src/tui.tsx` (or its imports `rpc.ts`/`usage.ts`), run
-`npm run build` and commit `dist/` — git installs have no build step.
+`npm run build:tui` and commit `dist/` — git installs have no build step.
+Do not name the script `build`/`prepare`/`prepack`/`install`: pacote runs
+git-dep preparation when any of those exist, and OpenCode's bundled npm-cli
+fails that step ("git dep preparation failed").
 
 Local verification without touching the real environment:
 

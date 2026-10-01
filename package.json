@@ -4,7 +4,7 @@
   "description": "Personal OpenCode V2 configuration as a plugin: agents, commands, tools, MCP servers, permissions, instructions.",
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build:tui": "tsc -p tsconfig.build.json",
     "test": "tsx --test test/*.test.ts test/*.test.tsx"
   },
   "exports": {
