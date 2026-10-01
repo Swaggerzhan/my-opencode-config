@@ -3,8 +3,6 @@
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "bundler",
-    "jsx": "react-jsx",
-    "jsxImportSource": "@opentui/solid",
     "strict": true,
     "skipLibCheck": true,
     "noEmit": true,

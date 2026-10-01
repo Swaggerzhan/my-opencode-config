@@ -7,7 +7,6 @@ type HookEvent = { agent: string; sessionID: string; tools: Record<string, unkno
 async function setup() {
   const added: Array<{ name: string; execute: (input: unknown, ctx: unknown) => Promise<{ content: string }> }> = []
   let hookFn: ((event: HookEvent) => void) | undefined
-  let rpcHandlers: { tools: (input: unknown) => Promise<{ tools: string[] }> } | undefined
   const ctx = {
     location: { directory: "/tmp" },
     tool: { transform: async (fn: (editor: { add: (tool: never) => void }) => void) => fn({ add: (tool) => added.push(tool) }) },
@@ -17,19 +16,12 @@ async function setup() {
         return { dispose: () => {} }
       },
     },
-    rpc: {
-      register: async (_def: unknown, handlers: typeof rpcHandlers) => {
-        rpcHandlers = handlers
-        return { dispose: () => {} }
-      },
-    },
   }
   await setupTools(ctx as never)
   const sbash = added.find((tool) => tool.name === "sbash")
   assert.ok(sbash, "sbash tool registered")
   assert.ok(hookFn, "context hook registered")
-  assert.ok(rpcHandlers, "rpc registered")
-  return { sbash, hook: hookFn, rpc: rpcHandlers }
+  return { sbash, hook: hookFn }
 }
 
 test("sbash rejects commands outside the whitelist", async () => {
@@ -50,12 +42,11 @@ test("sbash ls executes with fixed flags", async () => {
   assert.match(out.content, /total \d+/)
 })
 
-test("context hook hides shell for restricted agents and records tools", async () => {
-  const { hook, rpc } = await setup()
+test("context hook hides shell for restricted agents", async () => {
+  const { hook } = await setup()
   const event: HookEvent = { agent: "coder", sessionID: "s1", tools: { shell: {}, sbash: {}, read: {} } }
   hook(event)
   assert.deepEqual(Object.keys(event.tools), ["sbash", "read"])
-  assert.deepEqual(await rpc.tools({ sessionID: "s1" }), { tools: ["read", "sbash"] })
 })
 
 test("context hook hides sbash for full-shell agents", async () => {
@@ -63,9 +54,4 @@ test("context hook hides sbash for full-shell agents", async () => {
   const event: HookEvent = { agent: "main", sessionID: "s2", tools: { shell: {}, sbash: {} } }
   hook(event)
   assert.deepEqual(Object.keys(event.tools), ["shell"])
-})
-
-test("rpc returns an empty list for sessions without a request yet", async () => {
-  const { rpc } = await setup()
-  assert.deepEqual(await rpc.tools({ sessionID: "nope" }), { tools: [] })
 })

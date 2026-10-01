@@ -18,17 +18,10 @@
 import { Plugin } from "@opencode/plugin"
 import { execFile } from "node:child_process"
 import { promisify } from "node:util"
-import { SidebarRpc } from "./rpc"
 
 type Context = Parameters<NonNullable<Parameters<typeof Plugin.define>[0]["setup"]>>[0]
 
 const exec = promisify(execFile)
-
-// Effective tool ids per session, captured by the context hook below (after
-// the shell/sbash filtering) and served to the TUI sidebar over RPC. Only
-// requests with a non-empty tool set count, so auxiliary requests (title,
-// compaction) never overwrite the real list.
-const seenTools = new Map<string, string[]>()
 
 const WHITELIST = new Set(["git", "openspec", "ls", "rm", "rmdir"])
 
@@ -125,19 +118,9 @@ export async function setupTools(ctx: Context): Promise<() => void> {
   const hook = await ctx.session.hook("context", (event) => {
     if (SBASH_ONLY.has(event.agent)) delete event.tools.shell
     if (SBASH_HIDDEN.has(event.agent)) delete event.tools.sbash
-    const ids = Object.keys(event.tools)
-    if (ids.length > 0) seenTools.set(event.sessionID, ids.sort())
-  })
-
-  const rpc = await ctx.rpc.register(SidebarRpc, {
-    tools: async (input) => {
-      const { sessionID } = input as { sessionID: string }
-      return { tools: seenTools.get(sessionID) ?? [] }
-    },
   })
 
   return () => {
     hook.dispose()
-    rpc.dispose()
   }
 }

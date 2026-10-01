@@ -10,10 +10,6 @@
   // the auto-discovered plugins directory; otherwise uncomment and point at
   // the clone location.
   // "plugins": ["./plugins/my-opencode-config"],
-  // The bundled TUI sidebar ships its own Context Usage meter; hide the
-  // built-in Context section so it does not show twice. The built-in MCP
-  // section is intentionally left untouched.
-  "plugins": ["-opencode.sidebar.context"],
 
   "model": "OpenAI/gpt-5.6-sol",
   "default_agent": "main",
